@@ -119,6 +119,7 @@ class StatisticsViewModel @Inject constructor(
 fun StatisticsScreen(
     onOpenExpenses: (String) -> Unit,
     onOpenIncome: (String) -> Unit,
+    onOpenForecast: (String) -> Unit,
     vm: StatisticsViewModel = hiltViewModel(),
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
@@ -131,7 +132,7 @@ fun StatisticsScreen(
             StatRow(stringResource(R.string.records_expenses), -state.expenseMinor, onClick = { onOpenExpenses(state.ym.toString()) })
             StatRow(stringResource(R.string.records_income), state.incomeMinor, onClick = { onOpenIncome(state.ym.toString()) })
             StatRow(stringResource(R.string.stats_cashflow), state.cashflowMinor)
-            StatRow(stringResource(R.string.stats_forecast), -state.forecastMinor, subtitle = stringResource(R.string.stats_forecast_sub))
+            StatRow(stringResource(R.string.stats_forecast), -state.forecastMinor, subtitle = stringResource(R.string.stats_forecast_sub), onClick = { onOpenForecast(state.ym.toString()) })
         }
 
         MonthSwitcher(

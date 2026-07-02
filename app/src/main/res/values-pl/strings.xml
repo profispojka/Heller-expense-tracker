@@ -180,6 +180,7 @@
     <string name="stats_cashflow">Przepływ</string>
     <string name="stats_forecast">Prognoza</string>
     <string name="stats_forecast_sub">wydatki w przyszłym miesiącu</string>
+    <string name="stats_forecast_empty">Brak zaplanowanych płatności w przyszłym miesiącu.</string>
     <string name="month_prev">Poprzedni miesiąc</string>
     <string name="month_next">Następny miesiąc</string>
     <string name="stats_no_expenses">Brak wydatków w tym miesiącu.</string>
@@ -353,12 +354,21 @@
     <string name="backup_failed">Tworzenie kopii nie powiodło się: %1$s</string>
     <string name="restore_in_progress">Przywracam…</string>
     <string name="restore_failed">Przywracanie nie powiodło się: %1$s</string>
-    <string name="backup_intro">Aplikacja działa offline — dane są tylko w telefonie. Wykonaj kopię do pliku (do Plików, na dysk itp.). Przywracanie wczyta plik z powrotem i nadpisze bieżące dane.</string>
+    <string name="backup_intro">Aplikacja działa offline — dane są tylko w telefonie. Wykonaj kopię do pliku chronionego hasłem (do Plików, na dysk itp.); kopia zawiera też połączenie z bankiem. Przywracanie wczyta plik z powrotem i nadpisze bieżące dane.</string>
     <string name="backup_action">Utwórz kopię danych</string>
     <string name="restore_action">Przywróć z kopii</string>
     <string name="restore_confirm_title">Przywrócić z kopii?</string>
     <string name="restore_confirm_message">Spowoduje to nadpisanie wszystkich bieżących danych i ponowne uruchomienie aplikacji.</string>
     <string name="restore_confirm_yes">Przywróć</string>
+    <string name="backup_password_title">Hasło kopii</string>
+    <string name="backup_password_message">Kopia jest szyfrowana tym hasłem i zawiera połączenie z bankiem. Hasło będzie potrzebne do przywrócenia — jeśli je zapomnisz, nie da się go odzyskać.</string>
+    <string name="backup_password_hint">Hasło</string>
+    <string name="backup_password_confirm_hint">Potwierdź hasło</string>
+    <string name="backup_password_mismatch">Hasła nie są takie same.</string>
+    <string name="backup_password_too_short">Użyj co najmniej %1$d znaków, nie tylko cyfr.</string>
+    <string name="restore_password_title">Hasło kopii</string>
+    <string name="restore_password_message">Ta kopia jest zaszyfrowana. Wpisz hasło ustawione podczas jej tworzenia.</string>
+    <string name="restore_wrong_password">Błędne hasło lub uszkodzona kopia.</string>
 
     <!-- Nazwy domyślne -->
     <string name="account_default_name">Konto</string>

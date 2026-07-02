@@ -123,6 +123,29 @@ object PlannedPayments {
         return occ
     }
 
+    /** Konkrétní data všech výskytů platby v kalendářním měsíci [ym] (vzestupně). */
+    fun occurrenceDatesInMonth(
+        startEpochDay: Long,
+        unit: FrequencyUnit,
+        count: Int,
+        endEpochDay: Long?,
+        ym: YearMonth,
+    ): List<LocalDate> {
+        val rangeStart = ym.atDay(1)
+        val rangeEnd = ym.plusMonths(1).atDay(1) // exkluzivně
+        val end = endEpochDay?.let { LocalDate.ofEpochDay(it) }
+        var d = LocalDate.ofEpochDay(startEpochDay)
+        if (d.isBefore(rangeStart)) d = fastForward(d, unit, count, rangeStart)
+        val out = mutableListOf<LocalDate>()
+        var guard = 0
+        while (d.isBefore(rangeEnd) && guard < 5000) {
+            if (!d.isBefore(rangeStart) && (end == null || !d.isAfter(end))) out += d
+            d = step(d, unit, count)
+            guard++
+        }
+        return out
+    }
+
     fun formatDate(date: LocalDate): String = dateFormatter.format(date)
 
     /** Skok dopředu k prvnímu výskytu >= [target] (bez kroku po jednom). */

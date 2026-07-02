@@ -180,6 +180,7 @@
     <string name="stats_cashflow">Cash flow</string>
     <string name="stats_forecast">Forecast</string>
     <string name="stats_forecast_sub">expenses next month</string>
+    <string name="stats_forecast_empty">No planned payments next month.</string>
     <string name="month_prev">Previous month</string>
     <string name="month_next">Next month</string>
     <string name="stats_no_expenses">No expenses this month.</string>
@@ -353,12 +354,21 @@
     <string name="backup_failed">Backup failed: %1$s</string>
     <string name="restore_in_progress">Restoring…</string>
     <string name="restore_failed">Restore failed: %1$s</string>
-    <string name="backup_intro">The app is offline — data lives only on your phone. Back it up to a file (to Files, a drive, etc.). Restore reads the file back and overwrites current data.</string>
+    <string name="backup_intro">The app is offline — data lives only on your phone. Back it up to a password-protected file (Files, a drive, etc.); the backup also includes your bank connection. Restore reads the file back and overwrites current data.</string>
     <string name="backup_action">Back up data</string>
     <string name="restore_action">Restore from backup</string>
     <string name="restore_confirm_title">Restore from backup?</string>
     <string name="restore_confirm_message">This overwrites all current data and the app restarts.</string>
     <string name="restore_confirm_yes">Restore</string>
+    <string name="backup_password_title">Backup password</string>
+    <string name="backup_password_message">The backup is encrypted with this password and includes your bank connection. You\'ll need the password to restore it — there is no way to recover it if you forget it.</string>
+    <string name="backup_password_hint">Password</string>
+    <string name="backup_password_confirm_hint">Confirm password</string>
+    <string name="backup_password_mismatch">Passwords don\'t match.</string>
+    <string name="backup_password_too_short">Use at least %1$d characters, not only numbers.</string>
+    <string name="restore_password_title">Backup password</string>
+    <string name="restore_password_message">This backup is encrypted. Enter the password you set when creating it.</string>
+    <string name="restore_wrong_password">Wrong password or corrupted backup.</string>
 
     <!-- Default names -->
     <string name="account_default_name">Account</string>

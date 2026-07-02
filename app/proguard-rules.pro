@@ -1,13 +1,13 @@
 # ProGuard / R8 pravidla pro release (minify + shrinkResources zapnuté).
 # Hilt, Compose, Coroutines a Room dodávají vlastní consumer-rules přes svoje knihovny;
-# tady doplňujeme jen to, co je specifické pro CalmMoney.
+# tady doplňujeme jen to, co je specifické pro Heller.
 
 # --- Room: entity/DAO/convertery + DB enumy (ukládané jako .name → valueOf při čtení) ---
 # Drží celý data.db balíček, ať R8 nepřejmenuje názvy enum konstant uložené v databázi.
--keep class cz.calmmoney.data.db.** { *; }
+-keep class cz.heller.data.db.** { *; }
 
 # Pojistka pro enumy obecně (values()/valueOf používané Room convertery).
--keepclassmembers enum cz.calmmoney.** {
+-keepclassmembers enum cz.heller.** {
     public static **[] values();
     public static ** valueOf(java.lang.String);
 }

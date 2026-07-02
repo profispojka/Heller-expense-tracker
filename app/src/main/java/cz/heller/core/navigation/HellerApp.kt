@@ -17,6 +17,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -45,6 +47,7 @@ import cz.heller.feature.planned.PlannedPaymentsScreen
 import cz.heller.feature.records.RecordsScreen
 import cz.heller.feature.recurring.RecurringScreen
 import cz.heller.feature.statistics.StatisticsExpensesScreen
+import cz.heller.feature.statistics.StatisticsForecastScreen
 import cz.heller.feature.statistics.StatisticsIncomeScreen
 import cz.heller.feature.statistics.StatisticsScreen
 
@@ -52,6 +55,8 @@ import cz.heller.feature.statistics.StatisticsScreen
 @Composable
 fun HellerApp(rootViewModel: RootViewModel = hiltViewModel()) {
     val rootState by rootViewModel.state.collectAsStateWithLifecycle()
+    // Při každém otevření / návratu do aplikace stáhni čerstvá data z Fia.
+    LifecycleEventEffect(Lifecycle.Event.ON_START) { rootViewModel.onAppForegrounded() }
     when (rootState) {
         RootUiState.Loading -> Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {}
         RootUiState.Onboarding -> OnboardingScreen()
@@ -113,6 +118,7 @@ private fun MainScaffold() {
                 StatisticsScreen(
                     onOpenExpenses = { ym -> navController.navigate(Routes.statisticsExpenses(ym)) },
                     onOpenIncome = { ym -> navController.navigate(Routes.statisticsIncome(ym)) },
+                    onOpenForecast = { ym -> navController.navigate(Routes.statisticsForecast(ym)) },
                 )
             }
             composable(
@@ -131,6 +137,14 @@ private fun MainScaffold() {
                 StatisticsIncomeScreen(
                     onBack = { navController.popBackStack() },
                     onOpenRecord = { navController.navigate(Routes.recordDetail(it)) },
+                )
+            }
+            composable(
+                route = Routes.STATISTICS_FORECAST_ROUTE,
+                arguments = listOf(navArgument("ym") { type = NavType.StringType }),
+            ) {
+                StatisticsForecastScreen(
+                    onBack = { navController.popBackStack() },
                 )
             }
             composable(Routes.BUDGETS) {

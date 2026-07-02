@@ -180,6 +180,7 @@
     <string name="stats_cashflow">Cash flow</string>
     <string name="stats_forecast">Výhled</string>
     <string name="stats_forecast_sub">výdaje příští měsíc</string>
+    <string name="stats_forecast_empty">Příští měsíc žádné plánované platby.</string>
     <string name="month_prev">Předchozí měsíc</string>
     <string name="month_next">Další měsíc</string>
     <string name="stats_no_expenses">Tento měsíc žádné výdaje.</string>
@@ -353,12 +354,21 @@
     <string name="backup_failed">Záloha selhala: %1$s</string>
     <string name="restore_in_progress">Obnovuji…</string>
     <string name="restore_failed">Obnova selhala: %1$s</string>
-    <string name="backup_intro">Appka je offline — data jsou jen v telefonu. Zálohou si je ulož do souboru (do Souborů, na disk apod.). Obnova soubor načte zpět a přepíše současná data.</string>
+    <string name="backup_intro">Appka je offline — data jsou jen v telefonu. Zazálohuj je do souboru chráněného heslem (do Souborů, na disk apod.); záloha obsahuje i napojení na banku. Obnova soubor načte zpět a přepíše současná data.</string>
     <string name="backup_action">Zálohovat data</string>
     <string name="restore_action">Obnovit ze zálohy</string>
     <string name="restore_confirm_title">Obnovit ze zálohy?</string>
     <string name="restore_confirm_message">Přepíše to všechna současná data a aplikace se restartuje.</string>
     <string name="restore_confirm_yes">Obnovit</string>
+    <string name="backup_password_title">Heslo zálohy</string>
+    <string name="backup_password_message">Záloha se zašifruje tímto heslem a obsahuje i napojení na banku. Heslo budeš potřebovat k obnově — když ho zapomeneš, nejde nijak obnovit.</string>
+    <string name="backup_password_hint">Heslo</string>
+    <string name="backup_password_confirm_hint">Heslo znovu</string>
+    <string name="backup_password_mismatch">Hesla se neshodují.</string>
+    <string name="backup_password_too_short">Použij aspoň %1$d znaků, ne jen číslice.</string>
+    <string name="restore_password_title">Heslo zálohy</string>
+    <string name="restore_password_message">Tato záloha je šifrovaná. Zadej heslo, které jsi nastavil při jejím vytvoření.</string>
+    <string name="restore_wrong_password">Špatné heslo nebo poškozená záloha.</string>
 
     <!-- Výchozí názvy -->
     <string name="account_default_name">Účet</string>

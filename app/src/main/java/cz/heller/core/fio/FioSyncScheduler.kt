@@ -22,8 +22,10 @@ class FioSyncScheduler @Inject constructor(
                 Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build(),
             )
             .build()
+        // UPDATE (ne KEEP): pokud se dřívější naplánování „rozpadlo" (force-stop od OEM, decay),
+        // re-arm ho čerstvým requestem místo tichého ponechání mrtvého záznamu.
         WorkManager.getInstance(context)
-            .enqueueUniquePeriodicWork(FioSyncWorker.NAME, ExistingPeriodicWorkPolicy.KEEP, request)
+            .enqueueUniquePeriodicWork(FioSyncWorker.NAME, ExistingPeriodicWorkPolicy.UPDATE, request)
     }
 
     fun cancel() {

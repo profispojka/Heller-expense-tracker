@@ -122,6 +122,14 @@ class SettingsRepository @Inject constructor(
         }
     }
 
+    /** Přepíše celý seznam Fio připojení (z obnovy zálohy) — tokeny se znovu zašifrují novým KeyStore klíčem. */
+    suspend fun restoreFioConnections(list: List<FioConnection>) {
+        context.settingsDataStore.edit { prefs ->
+            prefs[Keys.FIO_CONNECTIONS] = serialize(list)
+            cleanLegacy(prefs)
+        }
+    }
+
     /** Odpojí jedno Fio konto (naimportované záznamy zůstanou). */
     suspend fun removeFioConnection(accountId: String) {
         context.settingsDataStore.edit { prefs ->

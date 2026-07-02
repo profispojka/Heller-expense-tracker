@@ -2,6 +2,7 @@ package cz.heller.core.navigation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.heller.core.fio.FioSyncManager
 import cz.heller.core.money.Money
 import cz.heller.data.repo.AccountRepository
 import cz.heller.data.settings.SettingsRepository
@@ -22,7 +23,12 @@ sealed interface RootUiState {
 class RootViewModel @Inject constructor(
     accountRepository: AccountRepository,
     settings: SettingsRepository,
+    private val fioSyncManager: FioSyncManager,
 ) : ViewModel() {
+
+    /** Zavolá se při každém otevření / návratu do aplikace — stáhne čerstvá data z Fia. */
+    fun onAppForegrounded() = fioSyncManager.syncNow()
+
     val state: StateFlow<RootUiState> = combine(
         accountRepository.observeActive(),
         settings.currency,

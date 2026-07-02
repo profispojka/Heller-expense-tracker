@@ -19,10 +19,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import cz.heller.core.designsystem.component.CalmConfirmSheet
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,7 +37,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import android.content.Context
 import cz.heller.R
 import cz.heller.core.designsystem.component.CalmPrimaryButton
+import cz.heller.core.security.WrongBackupPasswordException
 import cz.heller.data.backup.BackupManager
+import cz.heller.data.backup.BackupType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,37 +56,76 @@ class BackupViewModel @Inject constructor(
     private val _status = MutableStateFlow<String?>(null)
     val status: StateFlow<String?> = _status.asStateFlow()
 
-    fun backup(uri: Uri) {
+    fun backup(uri: Uri, password: CharArray) {
         viewModelScope.launch {
             _status.value = context.getString(R.string.backup_in_progress)
-            runCatching { backup.backupTo(uri) }
+            runCatching { backup.backupTo(uri, password) }
                 .onSuccess { _status.value = context.getString(R.string.backup_done) }
                 .onFailure { _status.value = context.getString(R.string.backup_failed, it.message ?: "") }
         }
     }
 
-    fun restore(uri: Uri) {
-        viewModelScope.launch {
-            _status.value = context.getString(R.string.restore_in_progress)
-            runCatching { backup.restoreFrom(uri) }
-                .onSuccess { backup.restartApp() }
-                .onFailure { _status.value = context.getString(R.string.restore_failed, it.message ?: "") }
-        }
+    suspend fun peekType(uri: Uri): BackupType = backup.peekType(uri)
+
+    /** Obnoví ze zálohy. Vrací true, pokud šlo o **špatné heslo** (dialog má zůstat otevřený). */
+    suspend fun restore(uri: Uri, password: CharArray?): Boolean {
+        _status.value = context.getString(R.string.restore_in_progress)
+        return runCatching { backup.restoreFrom(uri, password) }
+            .fold(
+                onSuccess = { backup.restartApp(); false },
+                onFailure = { e ->
+                    if (e is WrongBackupPasswordException) {
+                        _status.value = null
+                        true
+                    } else {
+                        _status.value = context.getString(R.string.restore_failed, e.message ?: "")
+                        false
+                    }
+                },
+            )
+    }
+
+    fun invalidBackup() {
+        _status.value = context.getString(R.string.backup_error_invalid)
     }
 }
 
 @Composable
 fun BackupScreen(onBack: () -> Unit, vm: BackupViewModel = hiltViewModel()) {
     val status by vm.status.collectAsStateWithLifecycle()
-    var confirmRestore by remember { mutableStateOf<Uri?>(null) }
+    val scope = rememberCoroutineScope()
+
+    // Záloha: nejdřív heslo, pak výběr souboru.
+    var showSetPassword by remember { mutableStateOf(false) }
+    var pendingBackupPassword by remember { mutableStateOf<CharArray?>(null) }
+
+    // Obnova: vybraný soubor + jeho typ + stav špatného hesla.
+    var restoreUri by remember { mutableStateOf<Uri?>(null) }
+    var restoreType by remember { mutableStateOf<BackupType?>(null) }
+    var wrongPassword by remember { mutableStateOf(false) }
 
     val backupLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/octet-stream"),
-    ) { uri -> uri?.let { vm.backup(it) } }
+    ) { uri ->
+        val pwd = pendingBackupPassword
+        if (uri != null && pwd != null) vm.backup(uri, pwd)
+        pendingBackupPassword = null
+    }
 
     val restoreLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument(),
-    ) { uri -> uri?.let { confirmRestore = it } }
+    ) { uri -> restoreUri = uri }
+
+    // Po výběru souboru zjisti typ (šifrovaný vs starý plaintext vs neplatný).
+    LaunchedEffect(restoreUri) {
+        val u = restoreUri
+        wrongPassword = false
+        restoreType = u?.let { vm.peekType(it) }
+        if (restoreType == BackupType.INVALID) {
+            vm.invalidBackup()
+            restoreUri = null
+        }
+    }
 
     Column(Modifier.fillMaxSize()) {
         Row(
@@ -101,7 +144,7 @@ fun BackupScreen(onBack: () -> Unit, vm: BackupViewModel = hiltViewModel()) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
-            CalmPrimaryButton(stringResource(R.string.backup_action), onClick = { backupLauncher.launch("heller-zaloha.db") })
+            CalmPrimaryButton(stringResource(R.string.backup_action), onClick = { showSetPassword = true })
 
             OutlinedButton(
                 onClick = { restoreLauncher.launch(arrayOf("*/*")) },
@@ -117,13 +160,38 @@ fun BackupScreen(onBack: () -> Unit, vm: BackupViewModel = hiltViewModel()) {
         }
     }
 
-    val uri = confirmRestore
-    if (uri != null) {
-        CalmConfirmSheet(
-            title = stringResource(R.string.restore_confirm_title),
-            confirmLabel = stringResource(R.string.restore_confirm_yes),
-            onConfirm = { confirmRestore = null; vm.restore(uri) },
-            onDismiss = { confirmRestore = null },
+    if (showSetPassword) {
+        SetBackupPasswordDialog(
+            onConfirm = { pwd ->
+                showSetPassword = false
+                pendingBackupPassword = pwd
+                backupLauncher.launch("heller-zaloha.hbk")
+            },
+            onDismiss = { showSetPassword = false },
         )
+    }
+
+    val uri = restoreUri
+    when {
+        uri != null && restoreType == BackupType.ENCRYPTED -> {
+            EnterBackupPasswordDialog(
+                error = wrongPassword,
+                onConfirm = { pwd ->
+                    scope.launch {
+                        val badPassword = vm.restore(uri, pwd)
+                        if (badPassword) wrongPassword = true else restoreUri = null
+                    }
+                },
+                onDismiss = { restoreUri = null },
+            )
+        }
+        uri != null && restoreType == BackupType.LEGACY_PLAINTEXT -> {
+            CalmConfirmSheet(
+                title = stringResource(R.string.restore_confirm_title),
+                confirmLabel = stringResource(R.string.restore_confirm_yes),
+                onConfirm = { scope.launch { vm.restore(uri, null) }; restoreUri = null },
+                onDismiss = { restoreUri = null },
+            )
+        }
     }
 }
