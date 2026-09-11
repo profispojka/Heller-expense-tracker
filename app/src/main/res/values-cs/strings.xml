@@ -164,6 +164,7 @@
     <!-- Nový/upravit záznam -->
     <string name="record_add_title">Nový záznam</string>
     <string name="record_edit_title">Upravit záznam</string>
+    <string name="record_transfer_mark_hint">Záznam se označí jako převod mezi vlastními účty — nezapočítá se do výdajů ani příjmů a zůstatek účtu se nezmění.</string>
     <string name="record_all_synced_hint">Tvůj účet se synchronizuje z Fia — plní se automaticky z banky, takže ruční záznamy do něj nejdou (aby částky seděly s internetbankingem). Pro ruční zadávání si vytvoř další účet, např. hotovostní (Více → Účty).</string>
     <string name="field_datetime">Datum a čas</string>
     <string name="action_next">Dál</string>

@@ -11,7 +11,13 @@ enum class AppCurrency(val code: String, val symbol: String) {
     SEK("SEK", "kr"),
     NOK("NOK", "kr"),
     DKK("DKK", "kr"),
-    HUF("HUF", "Ft");
+    HUF("HUF", "Ft"),
+    RON("RON", "lei"),
+    UAH("UAH", "₴"),
+    CAD("CAD", "C$"),
+    AUD("AUD", "A$"),
+    JPY("JPY", "¥"),
+    INR("INR", "₹");
 
     companion object {
         fun fromCode(code: String?): AppCurrency = entries.firstOrNull { it.code == code } ?: CZK

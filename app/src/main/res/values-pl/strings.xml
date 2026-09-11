@@ -164,6 +164,7 @@
     <!-- Nowa/edytuj transakcję -->
     <string name="record_add_title">Nowa transakcja</string>
     <string name="record_edit_title">Edytuj transakcję</string>
+    <string name="record_transfer_mark_hint">Transakcja zostanie oznaczona jako przelew między własnymi kontami — nie wliczy się do wydatków ani przychodów, a saldo konta pozostanie bez zmian.</string>
     <string name="record_all_synced_hint">Twoje konto synchronizuje się z Fio — uzupełnia się automatycznie z banku, więc nie można dodawać do niego ręcznych transakcji (aby kwoty zgadzały się z bankowością internetową). Aby dodawać ręcznie, utwórz inne konto, np. gotówkowe (Więcej → Konta).</string>
     <string name="field_datetime">Data i godzina</string>
     <string name="action_next">Dalej</string>

@@ -329,7 +329,11 @@ class RecordRepository @Inject constructor(
         )
     }
 
-    /** Úprava příjmu/výdaje (původ zůstává). */
+    /**
+     * Úprava příjmu/výdaje (původ zůstává). Změna typu na TRANSFER = označení jako převod mezi
+     * vlastními účty: jednostranný převod bez kategorie, směr převezme z původního záznamu
+     * (výdaj = odchozí) — zůstatek účtu sedí a do výdajů/příjmů se nepočítá.
+     */
     suspend fun updateEntry(
         id: String,
         type: RecordType,
@@ -341,19 +345,27 @@ class RecordRepository @Inject constructor(
         note: String? = null,
     ) {
         val existing = dao.getById(id) ?: return
+        val isTransfer = type == RecordType.TRANSFER
+        val transferOut = when {
+            !isTransfer -> null
+            existing.type == RecordType.TRANSFER -> existing.transferOut
+            else -> existing.type == RecordType.EXPENSE
+        }
+        val category = if (isTransfer) null else categoryId
         dao.update(
             existing.copy(
                 type = type,
                 accountId = accountId,
-                categoryId = categoryId,
+                categoryId = category,
                 amountMinor = amountMinor,
                 dateTime = dateTime,
                 payee = payee?.trim()?.ifBlank { null },
                 note = note?.trim()?.ifBlank { null },
+                transferOut = transferOut,
                 updatedAt = now(),
             )
         )
-        categorization.learn(payee, categoryId)
+        categorization.learn(payee, category)
     }
 
     suspend fun delete(record: RecordEntity) = dao.delete(record)

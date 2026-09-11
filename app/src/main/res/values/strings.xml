@@ -164,6 +164,7 @@
     <!-- New/edit record -->
     <string name="record_add_title">New record</string>
     <string name="record_edit_title">Edit record</string>
+    <string name="record_transfer_mark_hint">The record will be marked as a transfer between your own accounts — it won\'t count towards expenses or income, and the account balance stays the same.</string>
     <string name="record_all_synced_hint">Your account syncs from Fio — it fills automatically from the bank, so manual records can\'t be added to it (to keep amounts matching your online banking). To add records manually, create another account, e.g. a cash one (More → Accounts).</string>
     <string name="field_datetime">Date and time</string>
     <string name="action_next">Next</string>

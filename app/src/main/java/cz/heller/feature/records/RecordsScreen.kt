@@ -114,7 +114,15 @@ class RecordsViewModel @Inject constructor(
             .sortedByDescending { it.key }
             .map { (date, list) ->
                 val rows = list.sortedByDescending { it.dateTime }.map { it.toRowUi(byId, accMap, context) }
-                DayGroup(labelFor(date), rows, rows.sumOf { it.amountMinor })
+                // Převody mezi vlastními účty nejsou výdaj ani příjem — do denního součtu se nepočítají.
+                val dayTotal = list.sumOf { r ->
+                    when (r.type) {
+                        RecordType.INCOME -> r.amountMinor
+                        RecordType.EXPENSE -> -r.amountMinor
+                        RecordType.TRANSFER -> 0L
+                    }
+                }
+                DayGroup(labelFor(date), rows, dayTotal)
             }
         RecordsUiState(groups, income, expense, f, accs, expenseGroups(cats))
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), RecordsUiState())
