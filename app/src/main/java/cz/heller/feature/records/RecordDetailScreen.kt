@@ -151,12 +151,14 @@ fun RecordDetailScreen(
             )
 
             DetailRow(stringResource(R.string.detail_type), state.typeLabel)
-            if (state.isTransfer) {
+            if (state.isTransfer && record.transferAccountId != null) {
                 DetailRow(stringResource(R.string.detail_from_account), state.accountName ?: "—")
                 DetailRow(stringResource(R.string.detail_to_account), state.transferAccountName ?: "—")
             } else {
                 DetailRow(stringResource(R.string.detail_account), state.accountName ?: "—")
-                DetailRow(stringResource(R.string.detail_category), state.categoryName ?: stringResource(R.string.no_category))
+                if (!state.isTransfer) {
+                    DetailRow(stringResource(R.string.detail_category), state.categoryName ?: stringResource(R.string.no_category))
+                }
             }
             DetailRow(stringResource(R.string.detail_date), state.dateText)
             record.payee?.let { DetailRow(stringResource(R.string.detail_payee), it) }
@@ -164,7 +166,9 @@ fun RecordDetailScreen(
 
             HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
 
-            if (!state.isTransfer) {
+            // Oboustranný převod (2 propojené záznamy) se jen maže. Jednostranný (z Fia nebo ručně
+            // označený) jde upravit — třeba zrušit označení převodu.
+            if (!state.isTransfer || record.transferRecordId == null) {
                 CalmPrimaryButton(stringResource(R.string.action_edit), onClick = { onEdit(record.id) })
             }
             // Záznamy z Fio jsou napojené na banku (smazaný se při synchronizaci vrátí) —

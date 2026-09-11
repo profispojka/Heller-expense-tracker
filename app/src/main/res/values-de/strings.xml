@@ -164,6 +164,7 @@
     <!-- Neuer/Eintrag bearbeiten -->
     <string name="record_add_title">Neuer Eintrag</string>
     <string name="record_edit_title">Eintrag bearbeiten</string>
+    <string name="record_transfer_mark_hint">Der Eintrag wird als Umbuchung zwischen eigenen Konten markiert – er zählt weder zu Ausgaben noch zu Einnahmen, und der Kontostand bleibt gleich.</string>
     <string name="record_all_synced_hint">Dein Konto synchronisiert sich von Fio – es wird automatisch von der Bank befüllt, daher können keine manuellen Einträge hinzugefügt werden (damit die Beträge mit deinem Online-Banking übereinstimmen). Für manuelle Einträge erstelle ein weiteres Konto, z. B. ein Bargeldkonto (Mehr → Konten).</string>
     <string name="field_datetime">Datum und Uhrzeit</string>
     <string name="action_next">Weiter</string>

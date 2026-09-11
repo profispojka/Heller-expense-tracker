@@ -87,11 +87,13 @@ data class AddRecordUiState(
     val dateTimeMillis: Long = 0L,
     /** Všechny účty se synchronizují z Fia → ruční záznam nelze přidat (jen sync). */
     val allAccountsSynced: Boolean = false,
+    /** Úprava existujícího záznamu — typ Převod pak jen „označí jako převod" (bez protiúčtu). */
+    val isEditing: Boolean = false,
 ) {
     val amountMinor: Long get() = Money.parseToMinor(amountText) ?: 0L
     val canSave: Boolean
-        get() = amountMinor > 0 && when (type) {
-            RecordType.TRANSFER -> selectedAccountId != null && selectedToAccountId != null &&
+        get() = amountMinor > 0 && when {
+            type == RecordType.TRANSFER && !isEditing -> selectedAccountId != null && selectedToAccountId != null &&
                 selectedAccountId != selectedToAccountId
             else -> selectedAccountId != null
         }
@@ -171,6 +173,7 @@ class AddRecordViewModel @Inject constructor(
             dateTimeMillis = f.dateTimeMillis,
             // Nový záznam, ale všechny účty jsou Fio-synchronizované → ruční záznam nejde.
             allAccountsSynced = editingId == null && available.isEmpty() && accs.isNotEmpty(),
+            isEditing = editingId != null,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), AddRecordUiState())
 
@@ -325,7 +328,15 @@ fun AddRecordScreen(
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            if (state.type == RecordType.TRANSFER) {
+            if (state.type == RecordType.TRANSFER && state.isEditing) {
+                // Úprava = jen označit existující záznam jako převod (jednostranný, bez protiúčtu).
+                SelectorRow(stringResource(R.string.detail_account), accountName(state, state.selectedAccountId)) { pickFrom = true }
+                Text(
+                    stringResource(R.string.record_transfer_mark_hint),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            } else if (state.type == RecordType.TRANSFER) {
                 SelectorRow(stringResource(R.string.detail_from_account), accountName(state, state.selectedAccountId)) { pickFrom = true }
                 SelectorRow(stringResource(R.string.detail_to_account), accountName(state, state.selectedToAccountId)) { pickTo = true }
             } else {
