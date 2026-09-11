@@ -2,7 +2,7 @@ package cz.heller.data.db
 
 /**
  * Přednastavená sada kategorií (seed). Zakládá se při prvním vytvoření DB.
- * Struktura dle [docs/kategorie-seed.md] (vzor Wallet) — 11 skupin + podkategorie.
+ * Struktura dle [docs/07-default-categories.md] (vzor Wallet) — 11 skupin + podkategorie.
  * Stabilní `id` (slug) — kvůli budoucím pravidlům automatické kategorizace Fio.
  * `icon` jsou klíče monochrom Material ikon (viz `CategoryIcons`). Skupina „income"
  * je jediná příjmová (`CategoryType.INCOME`), zbytek je výdajový.
