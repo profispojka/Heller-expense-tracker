@@ -1,6 +1,6 @@
 # 09 — Stav projektu (Fáze 0–2 hotové, ověřeno na emulátoru)
 
-Android projekt **CalmMoney** (`cz.calmmoney`) — monochromatický E-Ink design system,
+Android projekt **Heller** (`cz.heller`) — monochromatický E-Ink design system,
 navigace, **jádro** (účty, transakce, dashboard) a **rozpočty + analýzy**.
 Cílové zařízení: **Mudita Kompakt**. Build OK; ověřeno během na emulátoru (API 35) s demo daty.
 
@@ -125,10 +125,6 @@ Cílové zařízení: **Mudita Kompakt**. Build OK; ověřeno během na emuláto
 - **Peníze** (`core/money/Money`): formátování CZK z minor units, znaménko, `BigDecimal`.
 - **Launcher ikona**: adaptivní, monochrom (značka „Horizont" — slunce/mince nad hladinou), `+` monochrome vrstva.
 - **Logo**: `assets/logo/` — `heller-mark.svg`, `heller-mark-inverted.svg`, `heller-lockup.svg`.
-
-## ⚠️ Tady to nešlo sestavit
-V tomto prostředí **chybí JDK a Android SDK**, takže projekt **nebyl zkompilován ani spuštěn**.
-Kód je psaný tak, aby seděl na uvedené verze, ale **build je nutné ověřit** u tebe.
 
 ## Jak projekt otevřít / sestavit
 1. **Android Studio** (Ladybug+ / novější s podporou AGP 8.7): `File → Open` → kořen `Money/`.
