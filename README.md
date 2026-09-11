@@ -11,7 +11,7 @@ extended with a read-only **Fio banka connector** for automatic transaction impo
 
 ## Highlights
 
-- **Monochrome E-Ink design:** black ink on white paper, high contrast, no animations and no ripple. Charts use lines, fills and bars, never color ([docs/08](docs/08-design-eink.md)).
+- **Monochrome E-Ink design:** black ink on white paper, high contrast, no animations and no ripple. Charts use lines, fills and bars, never color ([docs/06](docs/06-design-eink.md)).
 - **Offline-first:** all data stays on the phone (Room/SQLite). The only network access is the Fio import you opt into.
 - **Languages:** English, Czech, German, Polish. The app follows the system language.
 - **Currencies:** CZK, EUR, USD, GBP, CHF, PLN, SEK, NOK, DKK, HUF, RON, UAH, CAD, AUD, JPY, INR. You pick one during onboarding.
@@ -19,10 +19,10 @@ extended with a read-only **Fio banka connector** for automatic transaction impo
 ## Features
 
 ### Everyday tracking
-- **Records:** expense, income and transfer, with date and time, payee, note, and a hierarchical category picker. Records can be edited and deleted. A record imported or entered as income/expense can be *marked as a transfer between your own accounts*, which takes it out of statistics without changing the balance.
+- **Records:** expense, income and transfer, with date and time, note, and a hierarchical category picker. Records can be edited and deleted. A record imported or entered as income/expense can be *marked as a transfer between your own accounts*, which takes it out of statistics without changing the balance.
 - **Records list:** grouped by day, with daily totals (transfers excluded) and an income/expense summary. You can filter by type, account and category.
 - **Accounts:** multiple accounts with computed balances. An account can be flagged as a **business account**, so incoming payments count as income without categorizing each sender.
-- **Categories:** 80 preset categories (11 groups, 69 subcategories) modeled on Wallet, plus your own. There are about 69 monochrome icons ([docs/10](docs/10-vychozi-kategorie.md)).
+- **Categories:** 82 preset categories modeled on Wallet (11 groups with 69 subcategories, plus 2 added later), and your own. Each category has one of 72 monochrome icons ([docs/07](docs/07-default-categories.md)).
 
 ### Overview & insights
 - **Dashboard:** net worth, balance trend, expense trend with % change against the previous period (30 days / 12 weeks / 6 months / 1 year), top expenses, upcoming payments and recent records. The income trend appears only when a business account is connected.
@@ -38,7 +38,7 @@ extended with a read-only **Fio banka connector** for automatic transaction impo
 
 ### Fio banka import
 - Read-only connection using a Fio *API Bankovnictví* token ("account monitoring only"). The app never makes payments.
-- Multiple Fio accounts, each with its own token. After the first sync, a **daily background sync** runs through WorkManager.
+- Multiple Fio accounts, each with its own token. Sync runs when the app opens, plus a **daily background sync** through WorkManager.
 - Deduplication by (account, transaction ID). Card payments get the merchant name extracted.
 - **Transfers between your own connected accounts** are detected and kept out of statistics.
 - The displayed balance is the **real bank balance** (Fio `closingBalance`). Without strong authorization, Fio returns only the last 90 days.
@@ -47,7 +47,7 @@ extended with a read-only **Fio banka connector** for automatic transaction impo
   - It categorizes about ⅔ of imported transactions automatically.
 - Fio tokens are encrypted with an AES-256-GCM key held in **Android Keystore**, which never leaves the device.
 
-Details are in [docs/04](docs/04-fio-konektor.md).
+Details are in [docs/04](docs/04-fio-connector.md).
 
 ### Backup & restore
 - Exports the whole database, including bank connections, to a file through the system file picker. No extra permissions are needed.
@@ -97,21 +97,18 @@ app/src/main/java/cz/heller/
                        # statistics, backup, onboarding, more
 ```
 
-## Documentation (Czech)
+## Documentation
 
 | File | Contents |
 |---|---|
-| [docs/00-prehled-a-rozsah.md](docs/00-prehled-a-rozsah.md) | Vision, scope, what is and is not in the MVP |
-| [docs/01-funkce.md](docs/01-funkce.md) | Feature list from Wallet and how Heller covers it |
-| [docs/02-obrazovky.md](docs/02-obrazovky.md) | Detailed description of every screen |
-| [docs/03-datovy-model.md](docs/03-datovy-model.md) | Data model (Room entities, relationships, money, currencies) |
-| [docs/04-fio-konektor.md](docs/04-fio-konektor.md) | Fio API, token, sync, field mapping, security |
-| [docs/05-architektura.md](docs/05-architektura.md) | Tech stack, layers, libraries, project structure |
-| [docs/06-roadmap.md](docs/06-roadmap.md) | Development phases and milestones |
-| [docs/07-otevrene-otazky.md](docs/07-otevrene-otazky.md) | Open questions and decisions |
-| [docs/08-design-eink.md](docs/08-design-eink.md) | Visual style: black-and-white E-Ink |
-| [docs/09-stav-projektu.md](docs/09-stav-projektu.md) | Implementation status by phase |
-| [docs/10-vychozi-kategorie.md](docs/10-vychozi-kategorie.md) | Default categories |
+| [docs/00-overview.md](docs/00-overview.md) | What Heller is, principles, languages and currency, scope, comparison with Wallet |
+| [docs/01-features.md](docs/01-features.md) | Complete feature set by area |
+| [docs/02-screens.md](docs/02-screens.md) | Every screen, its content, actions and transitions |
+| [docs/03-data-model.md](docs/03-data-model.md) | Room entities, DataStore keys, migrations, backup format |
+| [docs/04-fio-connector.md](docs/04-fio-connector.md) | Fio API, sync triggers, parsing, import rules, token storage, recurring detection |
+| [docs/05-architecture.md](docs/05-architecture.md) | Tech stack, layers, project structure, key decisions, building and releases |
+| [docs/06-design-eink.md](docs/06-design-eink.md) | Visual style: black-and-white E-Ink (tokens, typography, components, charts) |
+| [docs/07-default-categories.md](docs/07-default-categories.md) | Preset category tree, slugs and localization |
 
 ## Intentionally out of scope
 
