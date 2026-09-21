@@ -25,10 +25,10 @@ class RecurringRepository @Inject constructor(
     suspend fun detectNew(accountId: String?): List<RecurringDetector.Candidate> {
         if (accountId == null) return emptyList()
         val recs = recordDao.observeByAccount(accountId).first().filter { it.source == RecordSource.FIO }
-        val learned = categorization.learnedSorted()
+        val model = categorization.model()
         val existing = planned.observeAll().first()
             .map { dedupKey(it.accountId, it.amountMinor, it.name) }.toSet()
-        return RecurringDetector.detect(recs, learned)
+        return RecurringDetector.detect(recs, model)
             .filter { dedupKey(accountId, it.amountMinor, it.name) !in existing }
     }
 

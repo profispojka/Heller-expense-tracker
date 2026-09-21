@@ -6,6 +6,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import cz.heller.data.db.AccountDao
+import cz.heller.data.db.CategoryAliases
 import cz.heller.data.db.HellerDatabase
 import cz.heller.data.db.CategoryDao
 import cz.heller.data.db.DefaultCategories
@@ -47,11 +48,54 @@ object DatabaseModule {
         }
     }
 
+    // v8 → v9: signály z banky pro kategorizaci (protiúčet, VS, typ pohybu) a příznak, že kategorii
+    // přiřadila automatika. Existující zařazené záznamy zůstávají „potvrzené" (categoryAuto = 0),
+    // takže se z nich model rovnou učí. Nedestruktivní.
+    private val MIGRATION_8_9 = object : Migration(8, 9) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE records ADD COLUMN counterAccount TEXT")
+            db.execSQL("ALTER TABLE records ADD COLUMN variableSymbol TEXT")
+            db.execSQL("ALTER TABLE records ADD COLUMN txType TEXT")
+            db.execSQL("ALTER TABLE records ADD COLUMN categoryAuto INTEGER NOT NULL DEFAULT 0")
+        }
+    }
+
+    // v9 → v10: zjednodušený strom kategorií (13 skupin, 35 kategorií místo 82). Staré přednastavené
+    // kategorie se přemapují přes CategoryAliases v záznamech, plánovaných platbách, rozpočtech i
+    // u rodičů uživatelských kategorií; pak se staré presety smažou a založí nové. Uživatelské
+    // kategorie (isDefault = 0) zůstávají. Nedestruktivní pro data uživatele.
+    private val MIGRATION_9_10 = object : Migration(9, 10) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            for ((old, new) in CategoryAliases.LEGACY) {
+                db.execSQL("UPDATE records SET categoryId = ? WHERE categoryId = ?", arrayOf(new, old))
+                db.execSQL("UPDATE planned_payments SET categoryId = ? WHERE categoryId = ?", arrayOf(new, old))
+                db.execSQL("UPDATE categories SET parentId = ? WHERE parentId = ? AND isDefault = 0", arrayOf(new, old))
+            }
+            // Rozpočty drží ID skupin jako CSV — přemapuj a odstraň duplicity/neexistující skupiny.
+            val groups = DefaultCategories.groupIds()
+            db.query("SELECT id, categoryGroupIds FROM budgets").use { c ->
+                val updates = ArrayList<Pair<String, String>>()
+                while (c.moveToNext()) {
+                    val id = c.getString(0)
+                    val csv = c.getString(1) ?: ""
+                    val mapped = csv.split(',').filter { it.isNotBlank() }
+                        .map { CategoryAliases.toCurrent(it) }
+                        .filter { it in groups }
+                        .distinct()
+                    updates += id to mapped.joinToString(",")
+                }
+                for ((id, csv) in updates) db.execSQL("UPDATE budgets SET categoryGroupIds = ? WHERE id = ?", arrayOf(csv, id))
+            }
+            db.execSQL("DELETE FROM categories WHERE isDefault = 1")
+            insertCategories(db, DefaultCategories.all())
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): HellerDatabase =
         Room.databaseBuilder(context, HellerDatabase::class.java, HellerDatabase.NAME)
-            .addMigrations(MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
+            .addMigrations(MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
             .addCallback(object : RoomDatabase.Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)

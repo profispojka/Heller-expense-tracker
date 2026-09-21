@@ -7,6 +7,9 @@ import cz.heller.data.db.CategoryEntity
 import cz.heller.data.db.RecordEntity
 import cz.heller.data.db.RecordType
 
+/** Tip kategorie pro nezařazený záznam (chip na jeden tap). */
+data class CategorySuggestion(val id: String, val name: String)
+
 /** Připravený řádek záznamu pro UI. amountMinor je znaménkové (příjem +, výdaj −). */
 data class RecordRowUi(
     val id: String,
@@ -14,16 +17,23 @@ data class RecordRowUi(
     val title: String,
     val subtitle: String?,
     val amountMinor: Long,
+    /** Tipy pro nezařazený příjem/výdaj; prázdné u zařazených a převodů. */
+    val suggestions: List<CategorySuggestion> = emptyList(),
 )
 
 fun RecordEntity.toRowUi(
     categories: Map<String, CategoryEntity>,
     accounts: Map<String, AccountEntity>,
     context: Context,
+    suggestions: List<CategorySuggestion> = emptyList(),
 ): RecordRowUi {
     val category = categoryId?.let { categories[it] }
     val accountName = accounts[accountId]?.name
     val noCategory = context.getString(R.string.no_category)
+    // Automaticky přiřazená (nepotvrzená) kategorie je označená, ať jde na první pohled zkontrolovat.
+    val categoryLabel = category?.name?.let { name ->
+        if (categoryAuto) "$name · ${context.getString(R.string.category_auto)}" else name
+    }
     return when (type) {
         RecordType.EXPENSE -> RecordRowUi(
             id = id,
@@ -31,22 +41,24 @@ fun RecordEntity.toRowUi(
             // Titulek = obchodník; pod ním kategorie · účet. U ručních (bez plátce) titulek = kategorie.
             title = payee ?: category?.name ?: noCategory,
             subtitle = if (payee != null) {
-                listOfNotNull(category?.name ?: noCategory, accountName).joinToString(" · ")
+                listOfNotNull(categoryLabel ?: noCategory, accountName).joinToString(" · ")
             } else {
                 note ?: accountName
             },
             amountMinor = -amountMinor,
+            suggestions = if (categoryId == null) suggestions else emptyList(),
         )
         RecordType.INCOME -> RecordRowUi(
             id = id,
             iconKey = category?.icon ?: "payments",
             title = payee ?: category?.name ?: context.getString(R.string.type_income),
             subtitle = if (payee != null) {
-                listOfNotNull(category?.name ?: noCategory, accountName).joinToString(" · ")
+                listOfNotNull(categoryLabel ?: noCategory, accountName).joinToString(" · ")
             } else {
                 note ?: accountName
             },
             amountMinor = amountMinor,
+            suggestions = if (categoryId == null) suggestions else emptyList(),
         )
         RecordType.TRANSFER -> {
             val here = accounts[accountId]?.name ?: "?"

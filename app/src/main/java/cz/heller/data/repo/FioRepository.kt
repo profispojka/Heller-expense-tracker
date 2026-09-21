@@ -4,6 +4,7 @@ import android.content.Context
 import cz.heller.R
 import cz.heller.core.categorize.Categorizer
 import cz.heller.core.categorize.MerchantText
+import cz.heller.core.categorize.TxFeatures
 import cz.heller.core.fio.FioApiClient
 import cz.heller.core.fio.FioFetchResult
 import cz.heller.core.fio.FioParser
@@ -80,7 +81,7 @@ class FioRepository @Inject constructor(
         val txs = runCatching { FioParser.parse(json) }
             .getOrElse { return FioSyncResult.Error(context.getString(R.string.fio_error_parse)) }
 
-        val learned = categorization.learnedSorted()
+        val model = categorization.model()
         val ownerNorm = ownerOf(txs)
 
         // Číslo tohoto účtu z Fia (pro budoucí detekci převodů mezi vlastními účty) ulož.
@@ -99,18 +100,33 @@ class FioRepository @Inject constructor(
             val minor = BigDecimal(t.amount).movePointRight(2).setScale(0, RoundingMode.HALF_UP).toLong()
             val ts = System.currentTimeMillis()
 
-            // U karetních plateb je protiúčet prázdný a obchodník je v textu („Nákup: …").
+            // U karetních plateb je protiúčet prázdný, v „názvu protiúčtu" je název karty
+            // („Fio Visa Classic payWave CZK") a obchodník je v textu („Nákup: …").
             val rawDesc = t.message ?: t.userIdentification ?: t.comment
-            val payee = t.counterName ?: merchantFrom(rawDesc) ?: t.counterAccount
+            val isCard = t.type?.contains("karetn", ignoreCase = true) == true || looksLikeCardName(t.counterName)
+            val payee = if (isCard) {
+                merchantFrom(rawDesc) ?: t.counterName
+            } else {
+                t.counterName ?: merchantFrom(rawDesc) ?: t.counterAccount
+            }
             val note = if (rawDesc != null && rawDesc != payee) rawDesc else null
 
             var recType = if (minor < 0) RecordType.EXPENSE else RecordType.INCOME
             var categoryId: String? = null
             var transferOut: Boolean? = null
-            when (val res = Categorizer.categorize(payee, note, t.type, minor >= 0, ownerNorm, learned)) {
+            val features = TxFeatures(
+                payee = payee,
+                note = note,
+                isIncome = minor >= 0,
+                amountMinor = abs(minor),
+                txType = t.type,
+                counterAccount = t.counterAccount,
+                variableSymbol = t.variableSymbol,
+            )
+            when (val res = Categorizer.categorize(features, ownerNorm, model)) {
                 Categorizer.Result.Transfer -> { recType = RecordType.TRANSFER; transferOut = minor < 0 }
                 is Categorizer.Result.Category -> categoryId = res.id
-                Categorizer.Result.None -> {}
+                is Categorizer.Result.Uncertain -> {}
             }
 
             // Převod mezi vlastními účty (protiúčet = jiný připojený Fio účet) → TRANSFER, mimo statistiky.
@@ -138,12 +154,20 @@ class FioRepository @Inject constructor(
                 transferOut = transferOut,
                 source = RecordSource.FIO,
                 fioTransactionId = t.id,
+                counterAccount = t.counterAccount,
+                variableSymbol = t.variableSymbol,
+                txType = t.type,
+                // Automaticky přiřazená kategorie čeká na potvrzení uživatelem (v UI označená „auto").
+                categoryAuto = categoryId != null,
                 createdAt = ts,
                 updatedAt = ts,
             )
             if (recordDao.insertIgnore(rec) != -1L) {
                 added++
                 if (categoryId != null || recType == RecordType.TRANSFER) categorized++
+            } else {
+                // Už importovaný pohyb (před v9 bez bankovních signálů) — doplň je, ať se z něj model učí.
+                recordDao.backfillFioSignals(accountId, t.id, t.counterAccount, t.variableSymbol, t.type)
             }
         }
 
@@ -176,13 +200,30 @@ class FioRepository @Inject constructor(
             .groupingBy { it }.eachCount()
             .maxByOrNull { it.value }?.key ?: ""
 
-    /** Z popisu karetní platby vytáhne obchodníka: „Nákup: ALBERT…, Havířov…" → „ALBERT…". */
+    /**
+     * Z popisu karetní platby vytáhne obchodníka: „Nákup: ALBERT…, Havířov…" → „ALBERT…".
+     * Přeskočí zdvořilostní první segment („Dekujeme, foodora.cz, …" → „foodora.cz").
+     */
     private fun merchantFrom(raw: String?): String? {
         if (raw.isNullOrBlank()) return null
         var s = raw.trim()
         for (prefix in listOf("Nákup:", "Platba kartou:", "Výběr:", "Kredit:", "Nákup")) {
             if (s.startsWith(prefix)) { s = s.removePrefix(prefix).trim(); break }
         }
-        return s.substringBefore(',').trim().ifBlank { null }
+        val segments = s.split(',').map { it.trim() }.filter { it.isNotEmpty() }
+        val first = segments.firstOrNull() ?: return null
+        if (MerchantText.normalize(first) in MERCHANT_NOISE) segments.getOrNull(1)?.let { return it }
+        return first
+    }
+
+    /** Název karty místo protistrany (Fio ho dává u karetních pohybů do „názvu protiúčtu"). */
+    private fun looksLikeCardName(name: String?): Boolean {
+        val n = MerchantText.normalize(name)
+        return n.isNotEmpty() && CARD_WORDS.any { it in n.split(' ') }
+    }
+
+    private companion object {
+        val MERCHANT_NOISE = setOf("dekujeme", "dakujeme", "dziekujemy", "danke", "thank you", "thanks")
+        val CARD_WORDS = setOf("visa", "mastercard", "maestro", "paywave", "debit", "credit")
     }
 }

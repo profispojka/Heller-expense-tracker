@@ -14,3 +14,16 @@ local.properties
 keystore.properties
 *.jks
 *.keystore
+
+# Kotlin 2.x compiler session data
+.kotlin/
+
+# Lokální vyhodnocovací data (reálné bankovní výpisy) — nikdy do gitu
+app/src/test/resources/categorize/local/
+pohyby-na-uctu.csv
+[Pp]ohyby*na*uctu*.csv
+# Zálohy appky (obsahují tokeny) — nikdy do gitu
+*.hellerbackup
+zaloha*
+backup*.bin
+*.hbk

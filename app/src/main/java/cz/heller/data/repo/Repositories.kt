@@ -89,6 +89,7 @@ class AccountRepository @Inject constructor(
 class CategoryRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val dao: CategoryDao,
+    private val categorization: CategorizationRepository,
 ) {
     // Názvy přednastavených kategorií se lokalizují podle id (viz [CategoryNames]).
     private fun localize(list: List<CategoryEntity>): List<CategoryEntity> =
@@ -125,6 +126,8 @@ class CategoryRepository @Inject constructor(
     suspend fun deleteWithChildren(category: CategoryEntity) {
         dao.deleteChildren(category.id)
         dao.delete(category)
+        // Model kategorizace validuje proti existujícím kategoriím — po smazání ho postav znovu.
+        categorization.invalidate()
     }
 }
 
@@ -295,7 +298,7 @@ class RecordRepository @Inject constructor(
                 updatedAt = ts,
             )
         )
-        categorization.learn(payee, categoryId)
+        if (categoryId != null) categorization.invalidate()
     }
 
     /** Převod mezi účty = dva propojené záznamy (odchozí + příchozí). */
@@ -357,6 +360,8 @@ class RecordRepository @Inject constructor(
                 type = type,
                 accountId = accountId,
                 categoryId = category,
+                // Kategorie uložená z editace je rozhodnutí uživatele → potvrzená (model se z ní učí).
+                categoryAuto = false,
                 amountMinor = amountMinor,
                 dateTime = dateTime,
                 payee = payee?.trim()?.ifBlank { null },
@@ -365,7 +370,25 @@ class RecordRepository @Inject constructor(
                 updatedAt = now(),
             )
         )
-        categorization.learn(payee, category)
+        categorization.invalidate()
+    }
+
+    /**
+     * Zařadí záznam do [categoryId] jako potvrzené uživatelem (tap na návrh) a hned dožene
+     * ostatní nezařazené záznamy — stejný obchodník se tak zařadí automaticky.
+     */
+    suspend fun assignCategory(id: String, categoryId: String) {
+        dao.setCategory(id, categoryId, auto = false, ts = now())
+        categorization.invalidate()
+        categorization.recategorizeUncategorized()
+    }
+
+    /** Potvrdí automaticky přiřazenou kategorii (od té chvíle se z ní model učí). */
+    suspend fun confirmCategory(id: String) {
+        val r = dao.getById(id) ?: return
+        if (r.categoryId == null || !r.categoryAuto) return
+        dao.setCategory(id, r.categoryId, auto = false, ts = now())
+        categorization.invalidate()
     }
 
     suspend fun delete(record: RecordEntity) = dao.delete(record)

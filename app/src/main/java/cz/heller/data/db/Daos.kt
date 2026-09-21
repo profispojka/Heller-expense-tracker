@@ -86,6 +86,12 @@ interface CategoryDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(categories: List<CategoryEntity>)
 
+    @Query("SELECT id FROM categories")
+    suspend fun getAllIds(): List<String>
+
+    @Query("SELECT id FROM categories WHERE type = 'INCOME'")
+    suspend fun getIncomeIds(): List<String>
+
     @Delete
     suspend fun delete(category: CategoryEntity)
 
@@ -147,6 +153,30 @@ interface RecordDao {
     /** Nezařazené příjmy/výdaje (bez kategorie) — pro dávkovou kategorizaci. */
     @Query("SELECT * FROM records WHERE categoryId IS NULL AND type IN ('EXPENSE', 'INCOME')")
     suspend fun getUncategorized(): List<RecordEntity>
+
+    /** Trénovací data kategorizace: záznamy zařazené/potvrzené uživatelem, chronologicky. */
+    @Query(
+        "SELECT * FROM records WHERE categoryId IS NOT NULL AND categoryAuto = 0 " +
+            "AND type IN ('EXPENSE', 'INCOME') ORDER BY dateTime ASC",
+    )
+    suspend fun getConfirmedCategorized(): List<RecordEntity>
+
+    @Query("UPDATE records SET categoryId = :categoryId, categoryAuto = :auto, updatedAt = :ts WHERE id = :id")
+    suspend fun setCategory(id: String, categoryId: String?, auto: Boolean, ts: Long)
+
+    /** Doplní bankovní signály (v9) k dříve importovaným Fio záznamům, které je ještě nemají. */
+    @Query(
+        "UPDATE records SET counterAccount = :counterAccount, variableSymbol = :variableSymbol, txType = :txType " +
+            "WHERE accountId = :accountId AND fioTransactionId = :fioTransactionId " +
+            "AND counterAccount IS NULL AND variableSymbol IS NULL AND txType IS NULL",
+    )
+    suspend fun backfillFioSignals(
+        accountId: String,
+        fioTransactionId: Long,
+        counterAccount: String?,
+        variableSymbol: String?,
+        txType: String?,
+    )
 
     /** Idempotentní vložení Fio záznamu (dedup přes unikátní fioTransactionId). */
     @Insert(onConflict = OnConflictStrategy.IGNORE)

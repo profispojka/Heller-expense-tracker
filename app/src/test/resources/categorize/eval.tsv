@@ -1,0 +1,105 @@
+# payee	note	txType	counterAccount	vs	amountMinor	income	expected
+# Vzorová sada ve stylu Fio výpisu (karetní platby: payee = obchodník z „Nákup: …", note = celý text).
+# Chronologicky. Nahraď / doplň anonymizovaným exportem reálných dat.
+ALBERT 0641	Nákup: ALBERT 0641, Havířov, dne 1.6.2026, částka 345.00 CZK	Platba kartou			34500	0	food_groceries
+LIDL CZ 0123	Nákup: LIDL CZ 0123, Ostrava, dne 2.6.2026, částka 812.40 CZK	Platba kartou			81240	0	food_groceries
+ZABKA Z8921 K.1	Nákup: ZABKA Z8921 K.1, Krakow, dne 3.6.2026, částka 23.50 PLN	Platba kartou			2350	0	food_groceries
+PIZZERIE U KOCOURA	Nákup: PIZZERIE U KOCOURA, Ostrava, dne 3.6.2026, částka 420.00 CZK	Platba kartou			42000	0	food_dining
+Kavarna Na Rohu	Nákup: Kavarna Na Rohu, Opava, dne 4.6.2026, částka 95.00 CZK	Platba kartou			9500	0	food_dining
+LEKARNA NA POLIKLINICE	Nákup: LEKARNA NA POLIKLINICE, Havířov, dne 4.6.2026, částka 256.00 CZK	Platba kartou			25600	0	health_care
+SHELL 3128	Nákup: SHELL 3128, Frýdek-Místek, dne 5.6.2026, částka 1500.00 CZK	Platba kartou			150000	0	transport_fuel
+ORLEN 1234	Nákup: ORLEN 1234, Ostrava, dne 6.6.2026, částka 1200.00 CZK	Platba kartou			120000	0	transport_fuel
+MPLA PARKOVANI	Nákup: MPLA PARKOVANI, Ostrava, dne 6.6.2026, částka 40.00 CZK	Platba kartou			4000	0	transport_car_other
+CSOB ATM 123	Výběr: CSOB ATM 123, Ostrava, dne 7.6.2026, částka 2000.00 CZK	Výběr z bankomatu			200000	0	cash_withdrawal
+Fio banka	Poplatek za vedení účtu	Poplatek			500	0	financial_fees
+ČEZ Prodej, a.s.	Záloha elektřina	Bezhotovostní platba	1234567890/0100	123456	250000	0	housing_utilities
+Jan Novák	Nájem červen	Bezhotovostní platba	2223334445/0800	202606	1200000	0	housing_rent_mortgage
+ROSSMANN 123	Nákup: ROSSMANN 123, Ostrava, dne 8.6.2026, částka 450.00 CZK	Platba kartou			45000	0	shopping_drugstore
+DM DROGERIE 456	Nákup: DM DROGERIE 456, Ostrava, dne 8.6.2026, částka 380.00 CZK	Platba kartou			38000	0	shopping_drugstore
+ALZA.CZ	Kredit: ALZA.CZ, Praha, dne 9.6.2026, částka 1299.00 CZK	Platba kartou			129900	1	income_refunds
+ACME s.r.o.	Mzda 05/2026	Bezhotovostní příjem	9876543210/2010	52026	4500000	1	income_wage
+NETFLIX.COM	Nákup: NETFLIX.COM, Amsterdam, dne 10.6.2026, částka 269.00 CZK	Platba kartou			26900	0	comm_apps
+SPOTIFY	Nákup: SPOTIFY, Stockholm, dne 10.6.2026, částka 169.00 CZK	Platba kartou			16900	0	comm_apps
+Vodafone Czech Republic a.s.	Faktura 2026060123	Bezhotovostní platba	1111222233/0100	771234	59900	0	comm_phone_internet
+KFC OSTRAVA	Nákup: KFC OSTRAVA, Ostrava, dne 11.6.2026, částka 189.00 CZK	Platba kartou			18900	0	food_dining
+BURGER KING 12	Nákup: BURGER KING 12, Praha, dne 11.6.2026, částka 215.00 CZK	Platba kartou			21500	0	food_dining
+BOLT.EU/O/2606	Nákup: BOLT.EU/O/2606, Tallinn, dne 12.6.2026, částka 145.00 CZK	Platba kartou			14500	0	transport_taxi
+UBER *TRIP	Nákup: UBER *TRIP, Amsterdam, dne 12.6.2026, částka 210.00 CZK	Platba kartou			21000	0	transport_taxi
+REGIOJET A.S.	Nákup: REGIOJET A.S., Praha, dne 13.6.2026, částka 399.00 CZK	Platba kartou			39900	0	transport_public
+DPP JIZDENKA	Nákup: DPP JIZDENKA, Praha, dne 13.6.2026, částka 30.00 CZK	Platba kartou			3000	0	transport_public
+BOOKING.COM	Nákup: BOOKING.COM, Amsterdam, dne 14.6.2026, částka 3200.00 CZK	Platba kartou			320000	0	leisure_holidays
+HOTEL PANORAMA	Nákup: HOTEL PANORAMA, Trenčín, dne 15.6.2026, částka 2100.00 CZK	Platba kartou			210000	0	leisure_holidays
+PENZION U LIPY	Nákup: PENZION U LIPY, Jeseník, dne 16.6.2026, částka 1800.00 CZK	Platba kartou			180000	0	leisure_holidays
+Restaurace Pod Hradem	Nákup: Restaurace Pod Hradem, Hukvaldy, dne 16.6.2026, částka 560.00 CZK	Platba kartou			56000	0	food_dining
+IKEA OSTRAVA	Nákup: IKEA OSTRAVA, Ostrava, dne 17.6.2026, částka 2450.00 CZK	Platba kartou			245000	0	housing_home
+OBI 123	Nákup: OBI 123, Ostrava, dne 17.6.2026, částka 780.00 CZK	Platba kartou			78000	0	housing_home
+DECATHLON	Nákup: DECATHLON, Ostrava, dne 18.6.2026, částka 1290.00 CZK	Platba kartou			129000	0	health_sport
+FITNESS CENTRUM RELAX	Nákup: FITNESS CENTRUM RELAX, Havířov, dne 18.6.2026, částka 990.00 CZK	Platba kartou			99000	0	health_sport
+KADERNICTVI LENKA	Nákup: KADERNICTVI LENKA, Havířov, dne 19.6.2026, částka 450.00 CZK	Platba kartou			45000	0	health_sport
+Kooperativa pojišťovna, a.s.	Pojistné 2026	Bezhotovostní platba	5555666677/0800	8800112233	350000	0	financial_insurance
+Generali Česká pojišťovna	Povinné ručení	Bezhotovostní platba	5555666688/0800	7700112233	280000	0	transport_car_insurance
+VZP ČR	Zdravotní pojištění OSVČ	Bezhotovostní platba	1234567/0710	8812345678	300000	0	financial_taxes
+ČSSZ	Sociální pojištění OSVČ	Bezhotovostní platba	7654321/0710	8812345678	350000	0	financial_taxes
+Finanční úřad pro MSK	Záloha daň z příjmu	Bezhotovostní platba	721-77628761/0710	8812345678	500000	0	financial_taxes
+GITHUB, INC.	Nákup: GITHUB, INC., San Francisco, dne 20.6.2026, částka 95.00 CZK	Platba kartou			9500	0	work_tools
+ANTHROPIC	Nákup: ANTHROPIC, San Francisco, dne 20.6.2026, částka 480.00 CZK	Platba kartou			48000	0	work_tools
+GOOGLE *CLOUD	Nákup: GOOGLE *CLOUD, Dublin, dne 21.6.2026, částka 120.00 CZK	Platba kartou			12000	0	work_tools
+APPLE.COM/BILL	Nákup: APPLE.COM/BILL, Cork, dne 21.6.2026, částka 79.00 CZK	Platba kartou			7900	0	comm_apps
+STEAMGAMES.COM	Nákup: STEAMGAMES.COM, Bellevue, dne 22.6.2026, částka 499.00 CZK	Platba kartou			49900	0	comm_apps
+ALZA.CZ	Nákup: ALZA.CZ, Praha, dne 22.6.2026, částka 2990.00 CZK	Platba kartou			299000	0	shopping_electronics
+DATART	Nákup: DATART, Ostrava, dne 23.6.2026, částka 1590.00 CZK	Platba kartou			159000	0	shopping_electronics
+ZASILKOVNA	Nákup: ZASILKOVNA, Praha, dne 23.6.2026, částka 79.00 CZK	Platba kartou			7900	0	shopping_other
+Česká pošta	Nákup: Česká pošta, Havířov, dne 24.6.2026, částka 120.00 CZK	Platba kartou			12000	0	shopping_other
+KNIHY DOBROVSKY	Nákup: KNIHY DOBROVSKY, Ostrava, dne 24.6.2026, částka 399.00 CZK	Platba kartou			39900	0	leisure_culture
+CINESTAR OSTRAVA	Nákup: CINESTAR OSTRAVA, Ostrava, dne 25.6.2026, částka 380.00 CZK	Platba kartou			38000	0	leisure_culture
+DIVADLO PETRA BEZRUCE	Nákup: DIVADLO PETRA BEZRUCE, Ostrava, dne 25.6.2026, částka 590.00 CZK	Platba kartou			59000	0	leisure_culture
+Darujme.cz	Nákup: Darujme.cz, Praha, dne 26.6.2026, částka 500.00 CZK	Platba kartou			50000	0	charity
+ZOO OSTRAVA	Nákup: ZOO OSTRAVA, Ostrava, dne 26.6.2026, částka 320.00 CZK	Platba kartou			32000	0	leisure_culture
+SUPER ZOO	Nákup: SUPER ZOO, Ostrava, dne 27.6.2026, částka 890.00 CZK	Platba kartou			89000	0	shopping_other
+VETERINA MEDVED	Nákup: VETERINA MEDVED, Havířov, dne 27.6.2026, částka 1200.00 CZK	Platba kartou			120000	0	shopping_other
+AUTOSERVIS NOVAK	Nákup: AUTOSERVIS NOVAK, Havířov, dne 28.6.2026, částka 4500.00 CZK	Platba kartou			450000	0	transport_car_other
+PNEU KOVAR	Nákup: PNEU KOVAR, Ostrava, dne 28.6.2026, částka 3200.00 CZK	Platba kartou			320000	0	transport_car_other
+TESCO STORES 123	Nákup: TESCO STORES 123, Ostrava, dne 29.6.2026, částka 640.00 CZK	Platba kartou			64000	0	food_groceries
+KAUFLAND CR 4100	Nákup: KAUFLAND CR 4100, Havířov, dne 29.6.2026, částka 1120.00 CZK	Platba kartou			112000	0	food_groceries
+BILLA 123	Nákup: BILLA 123, Ostrava, dne 30.6.2026, částka 310.00 CZK	Platba kartou			31000	0	food_groceries
+PENNY MARKET	Nákup: PENNY MARKET, Havířov, dne 30.6.2026, částka 280.00 CZK	Platba kartou			28000	0	food_groceries
+MMHS	Poplatek za komunální odpad	Bezhotovostní platba	1649297309/0800	1337000123	120000	0	financial_fees
+PAMIA	Nákup: PAMIA, Kotor, dne 1.7.2026, částka 15.00 EUR	Platba kartou			37500	0	charity
+XY TRADE S.R.O.	Nákup: XY TRADE S.R.O., Ostrava, dne 2.7.2026, částka 350.00 CZK	Platba kartou			35000	0	shopping_other
+Cafe Bar Mlyn	Nákup: Cafe Bar Mlyn, Ostrava, dne 2.7.2026, částka 160.00 CZK	Platba kartou			16000	0	food_dining
+SUSHI BAR TOKYO	Nákup: SUSHI BAR TOKYO, Ostrava, dne 3.7.2026, částka 480.00 CZK	Platba kartou			48000	0	food_dining
+KIKA	Nákup: KIKA, Ostrava, dne 3.7.2026, částka 1900.00 CZK	Platba kartou			190000	0	housing_home
+Trafika U Nadrazi	Nákup: Trafika U Nadrazi, Havířov, dne 4.7.2026, částka 85.00 CZK	Platba kartou			8500	0	food_dining
+Statutární město Ostrava	Pokuta za parkování	Bezhotovostní platba	1649297309/0800	4400112233	50000	0	financial_fees
+PEKARNA U VLKU	Nákup: PEKARNA U VLKU, Havířov, dne 5.7.2026, částka 65.00 CZK	Platba kartou			6500	0	food_dining
+MUDr. Jana Sedlackova	Nákup: MUDr. Jana Sedlackova, Havířov, dne 5.7.2026, částka 800.00 CZK	Platba kartou			80000	0	health_care
+SPORTISIMO	Nákup: SPORTISIMO, Ostrava, dne 6.7.2026, částka 1490.00 CZK	Platba kartou			149000	0	health_sport
+H&M 123	Nákup: H&M 123, Ostrava, dne 6.7.2026, částka 899.00 CZK	Platba kartou			89900	0	shopping_clothes
+C&A	Nákup: C&A, Ostrava, dne 7.7.2026, částka 1299.00 CZK	Platba kartou			129900	0	shopping_clothes
+TK MAXX	Nákup: TK MAXX, Ostrava, dne 7.7.2026, částka 1590.00 CZK	Platba kartou			159000	0	shopping_clothes
+SINSAY	Nákup: SINSAY, Ostrava, dne 8.7.2026, částka 499.00 CZK	Platba kartou			49900	0	shopping_clothes
+Rohlik.cz	Nákup: Rohlik.cz, Praha, dne 8.7.2026, částka 1450.00 CZK	Platba kartou			145000	0	food_groceries
+Dáme jídlo	Nákup: Dáme jídlo, Praha, dne 9.7.2026, částka 320.00 CZK	Platba kartou			32000	0	food_dining
+WOLT	Nákup: WOLT, Helsinki, dne 9.7.2026, částka 280.00 CZK	Platba kartou			28000	0	food_dining
+ZARA	Kredit: ZARA, Ostrava, dne 10.7.2026, částka 899.00 CZK	Platba kartou			89900	1	income_refunds
+ROSSMANN 123	Vrácení zboží	Bezhotovostní příjem	3333444455/0100		20000	1	income_refunds
+# --- druhé kolo: opakující se obchodníci a protiúčty (musí sedět z paměti) ---
+ALBERT 0912	Nákup: ALBERT 0912, Ostrava, dne 11.7.2026, částka 512.00 CZK	Platba kartou			51200	0	food_groceries
+Jan Novák	Nájem červenec	Bezhotovostní platba	2223334445/0800	202607	1200000	0	housing_rent_mortgage
+Jan Novák		Bezhotovostní platba	2223334445/0800	202608	1200000	0	housing_rent_mortgage
+ACME s.r.o.	Mzda 06/2026	Bezhotovostní příjem	9876543210/2010	62026	4500000	1	income_wage
+XY TRADE S.R.O.	Nákup: XY TRADE S.R.O., Ostrava, dne 12.7.2026, částka 220.00 CZK	Platba kartou			22000	0	shopping_other
+ČEZ Prodej, a.s.	Záloha elektřina	Bezhotovostní platba	1234567890/0100	123456	250000	0	housing_utilities
+Vodafone Czech Republic a.s.	Faktura 2026070123	Bezhotovostní platba	1111222233/0100	771235	59900	0	comm_phone_internet
+ZABKA ZC451 K.1	Nákup: ZABKA ZC451 K.1, Krakow, dne 13.7.2026, částka 31.20 PLN	Platba kartou			3120	0	food_groceries
+Kooperativa pojišťovna, a.s.	Pojistné 2026	Bezhotovostní platba	5555666677/0800	8800112233	350000	0	financial_insurance
+Statutární město Ostrava	Pokuta za parkování	Bezhotovostní platba	1649297309/0800	4400112299	50000	0	financial_fees
+# --- nové, ale popisné názvy (musí zvládnout slovník nebo Bayes) ---
+VINOTEKA U SUDU	Nákup: VINOTEKA U SUDU, Ostrava, dne 14.7.2026, částka 420.00 CZK	Platba kartou			42000	0	food_groceries
+Hospoda U Rudolfa	Nákup: Hospoda U Rudolfa, Havířov, dne 14.7.2026, částka 260.00 CZK	Platba kartou			26000	0	food_dining
+BENZINA 0456	Nákup: BENZINA 0456, Karviná, dne 15.7.2026, částka 1350.00 CZK	Platba kartou			135000	0	transport_fuel
+Zubni ordinace Dent	Nákup: Zubni ordinace Dent, Ostrava, dne 15.7.2026, částka 1500.00 CZK	Platba kartou			150000	0	health_care
+KVETINARSTVI ROSA	Nákup: KVETINARSTVI ROSA, Havířov, dne 16.7.2026, částka 350.00 CZK	Platba kartou			35000	0	charity
+Autoskola Start	Nákup: Autoskola Start, Ostrava, dne 16.7.2026, částka 3000.00 CZK	Platba kartou			300000	0	leisure_education
+ELEKTRO SVOBODA	Nákup: ELEKTRO SVOBODA, Havířov, dne 17.7.2026, částka 2100.00 CZK	Platba kartou			210000	0	shopping_electronics
+HRACKY POHADKA	Nákup: HRACKY POHADKA, Ostrava, dne 17.7.2026, částka 690.00 CZK	Platba kartou			69000	0	shopping_other

@@ -1,7 +1,9 @@
 package cz.heller.core.recurring
 
 import cz.heller.core.categorize.Categorizer
+import cz.heller.core.categorize.CategoryModel
 import cz.heller.core.categorize.MerchantText
+import cz.heller.core.categorize.TxFeatures
 import cz.heller.data.db.RecordEntity
 import cz.heller.data.db.RecordType
 import java.time.Instant
@@ -32,7 +34,7 @@ object RecurringDetector {
         val nextStartEpochDay: Long,
     )
 
-    fun detect(records: List<RecordEntity>, learned: List<Pair<String, String>>): List<Candidate> {
+    fun detect(records: List<RecordEntity>, model: CategoryModel): List<Candidate> {
         val expenses = records.filter { it.type == RecordType.EXPENSE && it.amountMinor >= MIN_MINOR }
         val groups = expenses.groupBy {
             (MerchantText.key(it.payee).ifBlank { MerchantText.normalize(it.payee) }) to it.amountMinor
@@ -55,7 +57,17 @@ object RecurringDetector {
             if (medianGap < 22 || medianGap > 40) continue // ne ~měsíční kadence
 
             val recent = list.maxByOrNull { it.dateTime }!!
-            val categoryId = when (val r = Categorizer.categorize(recent.payee, recent.note, null, false, "", learned)) {
+            // Už zařazený záznam má přednost; jinak zkus kategorizátor.
+            val features = TxFeatures(
+                payee = recent.payee,
+                note = recent.note,
+                isIncome = false,
+                amountMinor = recent.amountMinor,
+                txType = recent.txType,
+                counterAccount = recent.counterAccount,
+                variableSymbol = recent.variableSymbol,
+            )
+            val categoryId = recent.categoryId ?: when (val r = Categorizer.categorize(features, "", model)) {
                 is Categorizer.Result.Category -> r.id
                 else -> null
             }

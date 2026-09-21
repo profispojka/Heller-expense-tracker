@@ -64,6 +64,12 @@ data class RecordEntity(
     val transferOut: Boolean? = null,
     val source: RecordSource = RecordSource.MANUAL,
     val fioTransactionId: Long? = null,
+    // Signály z banky pro kategorizaci (v9): protiúčet, variabilní symbol, typ pohybu (Fio column8).
+    val counterAccount: String? = null,
+    val variableSymbol: String? = null,
+    val txType: String? = null,
+    // true = kategorii přiřadila automatika a uživatel ji nepotvrdil; false = zařazeno/potvrzeno uživatelem.
+    val categoryAuto: Boolean = false,
     val createdAt: Long,
     val updatedAt: Long,
 )

@@ -41,6 +41,7 @@ import cz.heller.core.designsystem.component.MoneyAmount
 import cz.heller.data.db.AccountEntity
 import cz.heller.data.db.RecordType
 import cz.heller.data.repo.AccountRepository
+import cz.heller.data.repo.CategorizationRepository
 import cz.heller.data.repo.CategoryRepository
 import cz.heller.data.repo.RecordRepository
 import cz.heller.feature.budgets.CategoryGroup
@@ -54,6 +55,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -67,8 +69,10 @@ data class RecordFilter(
     val type: RecordType? = null,
     val accountId: String? = null,
     val groupId: String? = null,
+    /** Jen nezařazené příjmy/výdaje — „inbox" k roztřídění. */
+    val uncategorized: Boolean = false,
 ) {
-    val isActive: Boolean get() = type != null || accountId != null || groupId != null
+    val isActive: Boolean get() = type != null || accountId != null || groupId != null || uncategorized
 }
 
 data class RecordsUiState(
@@ -83,9 +87,10 @@ data class RecordsUiState(
 @HiltViewModel
 class RecordsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    records: RecordRepository,
+    private val records: RecordRepository,
     categories: CategoryRepository,
     accounts: AccountRepository,
+    private val categorization: CategorizationRepository,
 ) : ViewModel() {
 
     private val zone: ZoneId = ZoneId.systemDefault()
@@ -102,7 +107,8 @@ class RecordsViewModel @Inject constructor(
         val filtered = recs.filter { r ->
             (f.type == null || r.type == f.type) &&
                 (f.accountId == null || r.accountId == f.accountId) &&
-                (f.groupId == null || groupIdOf(r.categoryId, byId) == f.groupId)
+                (f.groupId == null || groupIdOf(r.categoryId, byId) == f.groupId) &&
+                (!f.uncategorized || (r.categoryId == null && r.type != RecordType.TRANSFER))
         }
         val accMap = accs.associateBy { it.id }
         val income = filtered.filter { it.type == RecordType.INCOME }.sumOf { it.amountMinor }
@@ -113,7 +119,15 @@ class RecordsViewModel @Inject constructor(
             .entries
             .sortedByDescending { it.key }
             .map { (date, list) ->
-                val rows = list.sortedByDescending { it.dateTime }.map { it.toRowUi(byId, accMap, context) }
+                val rows = list.sortedByDescending { it.dateTime }.map { r ->
+                    // Nezařazený příjem/výdaj dostane tipy kategorií (chipy na jeden tap).
+                    val tips = if (r.categoryId == null && r.type != RecordType.TRANSFER) {
+                        categorization.suggestionsFor(r).mapNotNull { id -> byId[id]?.let { CategorySuggestion(id, it.name) } }
+                    } else {
+                        emptyList()
+                    }
+                    r.toRowUi(byId, accMap, context, tips)
+                }
                 // Převody mezi vlastními účty nejsou výdaj ani příjem — do denního součtu se nepočítají.
                 val dayTotal = list.sumOf { r ->
                     when (r.type) {
@@ -129,8 +143,14 @@ class RecordsViewModel @Inject constructor(
 
     fun setTypeFilter(type: RecordType?) = filter.update { it.copy(type = type) }
     fun setAccountFilter(id: String?) = filter.update { it.copy(accountId = id) }
-    fun setGroupFilter(id: String?) = filter.update { it.copy(groupId = id) }
+    fun setGroupFilter(id: String?) = filter.update { it.copy(groupId = id, uncategorized = false) }
+    fun setUncategorizedFilter(on: Boolean) = filter.update { it.copy(uncategorized = on, groupId = null) }
     fun clearFilter() = filter.update { RecordFilter() }
+
+    /** Tap na tip kategorie: zařadí záznam jako potvrzený a dožene stejné obchodníky. */
+    fun assignCategory(recordId: String, categoryId: String) {
+        viewModelScope.launch { records.assignCategory(recordId, categoryId) }
+    }
 
     private fun labelFor(date: LocalDate): String {
         val today = LocalDate.now()
@@ -215,7 +235,11 @@ fun RecordsScreen(
                     }
                     items(group.items.size, key = { group.items[it].id }) { i ->
                         val item = group.items[i]
-                        RecordRowItem(item, onClick = { onOpenRecord(item.id) })
+                        RecordRowItem(
+                            item,
+                            onClick = { onOpenRecord(item.id) },
+                            onSuggestion = { catId -> vm.assignCategory(item.id, catId) },
+                        )
                         HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
                     }
                 }
@@ -249,7 +273,8 @@ private fun FilterPanel(state: RecordsUiState, vm: RecordsViewModel) {
 
         Text(stringResource(R.string.detail_category), style = MaterialTheme.typography.labelLarge)
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            CalmChip(stringResource(R.string.filter_all), state.filter.groupId == null, onClick = { vm.setGroupFilter(null) })
+            CalmChip(stringResource(R.string.filter_all), state.filter.groupId == null && !state.filter.uncategorized, onClick = { vm.setGroupFilter(null) })
+            CalmChip(stringResource(R.string.filter_uncategorized), state.filter.uncategorized, onClick = { vm.setUncategorizedFilter(!state.filter.uncategorized) })
             state.categoryGroups.forEach { g ->
                 CalmChip(g.name, state.filter.groupId == g.id, onClick = { vm.setGroupFilter(g.id) })
             }

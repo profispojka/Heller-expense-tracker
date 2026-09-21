@@ -15,8 +15,9 @@ import javax.inject.Singleton
 private val Context.rulesDataStore by preferencesDataStore(name = "categorization")
 
 /**
- * Naučená pravidla obchodník → kategorie (klíč → categoryId) v DataStore (mimo Room,
- * takže nepotřebuje migraci schématu). Serializováno jako jeden JSON objekt.
+ * **Legacy** naučená pravidla obchodník → kategorie (klíč → categoryId) v DataStore z verzí
+ * před 1.4. Nové učení jde přímo z potvrzených záznamů v Room ([cz.heller.data.repo.CategorizationRepository]);
+ * tenhle store se už jen čte, aby starší instalace o nic nepřišly.
  */
 @Singleton
 class CategoryRulesStore @Inject constructor(

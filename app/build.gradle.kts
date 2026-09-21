@@ -24,8 +24,8 @@ android {
         applicationId = "cz.heller"
         minSdk = 26
         targetSdk = 35
-        versionCode = 9
-        versionName = "1.3.0"
+        versionCode = 10
+        versionName = "1.4.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables { useSupportLibrary = true }
     }
@@ -101,4 +101,7 @@ dependencies {
     ksp(libs.androidx.hilt.compiler)
 
     debugImplementation(libs.androidx.ui.tooling)
+
+    // JVM unit testy čisté logiky (core/categorize) — bez Androidu, bez emulátoru.
+    testImplementation(libs.junit)
 }
