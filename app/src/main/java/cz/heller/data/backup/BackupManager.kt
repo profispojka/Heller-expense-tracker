@@ -147,6 +147,7 @@ class BackupManager @Inject constructor(
         return JSONObject()
             .put("version", META_VERSION)
             .put("currency", settings.currency.first())
+            .put("amountFormat", settings.amountFormat.first())
             .put("fio", fioArr)
             .toString()
     }
@@ -154,6 +155,7 @@ class BackupManager @Inject constructor(
     private suspend fun applyMeta(json: String) {
         val o = runCatching { JSONObject(json) }.getOrNull() ?: return
         o.optString("currency").takeIf { it.isNotBlank() }?.let { settings.setCurrency(it) }
+        o.optString("amountFormat").takeIf { it.isNotBlank() }?.let { settings.setAmountFormat(it) }
         val arr = o.optJSONArray("fio") ?: JSONArray()
         val list = (0 until arr.length()).mapNotNull { i ->
             val c = arr.optJSONObject(i) ?: return@mapNotNull null

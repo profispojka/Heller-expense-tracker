@@ -34,6 +34,7 @@ class SettingsRepository @Inject constructor(
     private object Keys {
         val ONBOARDING_DONE = booleanPreferencesKey("onboarding_done")
         val CURRENCY = stringPreferencesKey("currency")
+        val AMOUNT_FORMAT = stringPreferencesKey("amount_format")
         // Více Fio připojení jako JSON pole [{token, accountId, lastSync}].
         val FIO_CONNECTIONS = stringPreferencesKey("fio_connections")
         // Staré klíče (jedno připojení) — jen pro migraci na seznam.
@@ -55,6 +56,14 @@ class SettingsRepository @Inject constructor(
 
     suspend fun setCurrency(code: String) {
         context.settingsDataStore.edit { it[Keys.CURRENCY] = code }
+    }
+
+    /** Styl zápisu částek (kód [cz.heller.core.money.AmountFormat]), default "cs" = 9 133,58. */
+    val amountFormat: Flow<String> =
+        context.settingsDataStore.data.map { it[Keys.AMOUNT_FORMAT] ?: "cs" }
+
+    suspend fun setAmountFormat(code: String) {
+        context.settingsDataStore.edit { it[Keys.AMOUNT_FORMAT] = code }
     }
 
     // --- Fio připojení (více účtů) ---

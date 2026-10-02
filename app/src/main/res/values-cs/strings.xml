@@ -32,6 +32,12 @@
     <string name="more_categories">Kategorie</string>
     <string name="more_budgets">Rozpočty</string>
     <string name="more_backup">Záloha dat</string>
+    <string name="more_settings">Nastavení</string>
+    <string name="settings_amount_format">Formát částek</string>
+    <string name="settings_amount_format_hint">Jak se zapisují částky v celé aplikaci. Uložené hodnoty se nemění.</string>
+    <string name="amount_format_cs">Český</string>
+    <string name="amount_format_us">Americký</string>
+    <string name="amount_format_eu">Evropský</string>
 
     <!-- Účty -->
     <string name="accounts_title">Účty</string>

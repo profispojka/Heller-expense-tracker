@@ -32,6 +32,12 @@
     <string name="more_categories">Categories</string>
     <string name="more_budgets">Budgets</string>
     <string name="more_backup">Data backup</string>
+    <string name="more_settings">Settings</string>
+    <string name="settings_amount_format">Amount format</string>
+    <string name="settings_amount_format_hint">How amounts are written across the app. Stored values do not change.</string>
+    <string name="amount_format_cs">Czech</string>
+    <string name="amount_format_us">US</string>
+    <string name="amount_format_eu">European</string>
 
     <!-- Accounts -->
     <string name="accounts_title">Accounts</string>
