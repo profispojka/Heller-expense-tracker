@@ -7,7 +7,7 @@ phones** (primarily the **Mudita Kompakt**). Feature set inspired by
 **Wallet by BudgetBakers** ([budgetbakers.com](https://budgetbakers.com/en/products/wallet/)),
 extended with a read-only **Fio banka connector** for automatic transaction import.
 
-**Current version: 1.4.0** · [Download APK](releases/app-release-1.4.0.apk) · older builds in [`releases/`](releases/)
+**Current version: 1.5.0** · [Download APK](releases/app-release-1.5.0.apk) · older builds in [`releases/`](releases/)
 
 ## Highlights
 
@@ -15,6 +15,7 @@ extended with a read-only **Fio banka connector** for automatic transaction impo
 - **Offline-first:** all data stays on the phone (Room/SQLite). The only network access is the Fio import you opt into.
 - **Languages:** English, Czech, German, Polish. The app follows the system language.
 - **Currencies:** CZK, EUR, USD, GBP, CHF, PLN, SEK, NOK, DKK, HUF, RON, UAH, CAD, AUD, JPY, INR. You pick one during onboarding.
+- **Amount format:** Czech `9 133,58 $` (default), US `$9,133.58` or European `9.133,58 $`, switchable in More → Settings.
 
 ## Features
 

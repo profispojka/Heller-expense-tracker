@@ -32,9 +32,11 @@ class RootViewModel @Inject constructor(
     val state: StateFlow<RootUiState> = combine(
         accountRepository.observeActive(),
         settings.currency,
-    ) { accounts, currency ->
-        // Zvolenou měnu nastav dřív, než se vykreslí jakákoliv částka.
+        settings.amountFormat,
+    ) { accounts, currency, amountFormat ->
+        // Zvolenou měnu a formát nastav dřív, než se vykreslí jakákoliv částka.
         Money.applyCurrency(currency)
+        Money.applyAmountFormat(amountFormat)
         if (accounts.isEmpty()) RootUiState.Onboarding else RootUiState.Ready
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), RootUiState.Loading)
 }

@@ -111,7 +111,7 @@ or `ANDROID_HOME`). Android Studio sets both up automatically when you open the 
   If the file is missing, the release build is signed with the debug key, so a fresh clone still
   builds.
 - **Versioning** lives in `app/build.gradle.kts` (`versionCode` / `versionName`, currently
-  10 / 1.4.0).
+  11 / 1.5.0).
 - **Brand lexicon** is generated, not hand-written. To refresh it from the current Name
   Suggestion Index run `node tools/lexicon/generate-brands.mjs` and commit the regenerated
   `BrandLexicon.kt`. The mapping from OSM shop types to Heller categories, the country filter

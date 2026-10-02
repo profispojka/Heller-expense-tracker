@@ -14,6 +14,7 @@ import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.PieChart
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +34,7 @@ fun MoreScreen(
     onOpenCategories: () -> Unit,
     onOpenBudgets: () -> Unit,
     onOpenBackup: () -> Unit,
+    onOpenSettings: () -> Unit,
 ) {
     Column(Modifier.fillMaxSize()) {
         CalmTopBar(stringResource(R.string.nav_more))
@@ -40,6 +42,7 @@ fun MoreScreen(
         MoreRow(Icons.AutoMirrored.Filled.Label, stringResource(R.string.more_categories), onOpenCategories)
         MoreRow(Icons.Filled.PieChart, stringResource(R.string.more_budgets), onOpenBudgets)
         MoreRow(Icons.Filled.Backup, stringResource(R.string.more_backup), onOpenBackup)
+        MoreRow(Icons.Filled.Settings, stringResource(R.string.more_settings), onOpenSettings)
     }
 }
 

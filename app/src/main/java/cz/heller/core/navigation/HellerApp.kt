@@ -39,6 +39,7 @@ import cz.heller.feature.categories.CategoriesScreen
 import cz.heller.feature.categories.CategoryPickerScreen
 import cz.heller.feature.dashboard.DashboardScreen
 import cz.heller.feature.more.MoreScreen
+import cz.heller.feature.settings.SettingsScreen
 import cz.heller.feature.onboarding.OnboardingScreen
 import cz.heller.feature.planned.AddPlannedPaymentScreen
 import cz.heller.feature.planned.MatchPaymentScreen
@@ -162,7 +163,11 @@ private fun MainScaffold() {
                     onOpenCategories = { navController.navigate(Routes.CATEGORIES) },
                     onOpenBudgets = { navController.navigate(Routes.BUDGETS) },
                     onOpenBackup = { navController.navigate(Routes.BACKUP) },
+                    onOpenSettings = { navController.navigate(Routes.SETTINGS) },
                 )
+            }
+            composable(Routes.SETTINGS) {
+                SettingsScreen(onBack = { navController.popBackStack() })
             }
             composable(Routes.RECURRING) {
                 RecurringScreen(onBack = { navController.popBackStack() })

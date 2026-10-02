@@ -32,6 +32,12 @@
     <string name="more_categories">Kategorie</string>
     <string name="more_budgets">Budżety</string>
     <string name="more_backup">Kopia danych</string>
+    <string name="more_settings">Ustawienia</string>
+    <string name="settings_amount_format">Format kwot</string>
+    <string name="settings_amount_format_hint">Jak zapisywane są kwoty w całej aplikacji. Zapisane wartości się nie zmieniają.</string>
+    <string name="amount_format_cs">Czeski</string>
+    <string name="amount_format_us">Amerykański</string>
+    <string name="amount_format_eu">Europejski</string>
 
     <!-- Konta -->
     <string name="accounts_title">Konta</string>

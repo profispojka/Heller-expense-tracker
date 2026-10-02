@@ -52,6 +52,7 @@ object Routes {
 
     const val CATEGORIES = "categories"
     const val BACKUP = "backup"
+    const val SETTINGS = "settings"
     const val RECURRING = "recurring"
     const val CATEGORY_PICKER_ROUTE = "category_picker/{type}"
     fun categoryPicker(type: String) = "category_picker/$type"
